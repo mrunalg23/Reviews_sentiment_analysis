@@ -11,6 +11,9 @@ from nltk.corpus import stopwords
 from wordcloud import WordCloud, STOPWORDS
 from flask import Flask, render_template, request
 import time
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+nltk.download('vader_lexicon')
 
 # nltk.download('stopwords')
 # nltk.download('punkt')
@@ -167,6 +170,34 @@ def result():
     #         predictions.append('NEGATIVE')
 
     # making a dictionary of product attributes and saving all the products in a list
+    
+    sentiments = SentimentIntensityAnalyzer()
+    positive = [sentiments.polarity_scores(i)["pos"] for i in clean_reviews]
+    negative = [sentiments.polarity_scores(i)["neg"] for i in clean_reviews]
+    neutral = [sentiments.polarity_scores(i)["neu"] for i in clean_reviews]
+
+    def sentiment_score(a, b, c):
+        if (a > b) and (a > c):
+            return "positive"
+        elif (b > a) and (b > c):
+            return "negative"
+        else:
+            return "neutral"
+    value=[]
+    val=""
+    pos, neg, neu = 0, 0, 0
+    for i in range(0,len(clean_reviews)):
+        a = positive[i]
+        b = negative[i]
+        c = neutral[i]
+        val = sentiment_score(a, b, c)
+        if val =="positive":
+            pos+=1
+        elif val =="negative":
+            neg+=1
+        else:
+            neu+=1
+        value.append(val)
     d = []
     for i in range(len(org_reviews)):
         x = {}
@@ -175,23 +206,18 @@ def result():
         x['cn'] = customernames[i]
         x['ch'] = commentheads[i]
         x['stars'] = ratings[i]
+        x['analysis'] = value[i]
         d.append(x)
-
+    print(value)
     for i in d:
         if i['stars'] != 0:
-            if i['stars'] in [1, 2]:
+            if i['analysis'] =="negative":
                 i['sent'] = 'NEGATIVE'
+            elif i['analysis'] =="neutral":
+                i['sent'] = 'NEUTRAL'
             else:
                 i['sent'] = 'POSITIVE'
-
-    np, nn = 0, 0
-    for i in d:
-        if i['sent'] == 'NEGATIVE':
-            nn += 1
-        else:
-            np += 1
-
-    return render_template('result.html', dic=d, n=len(clean_reviews), nn=nn, np=np, proname=proname, price=price)
+    return render_template('result.html', dic=d, n=len(clean_reviews), neg=neg, pos=pos, neu=neu, proname=proname, price=price)
 
 
 @app.route('/wc')

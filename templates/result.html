@@ -95,18 +95,23 @@
     </div>
 
     <div class='row'>
-        <div class='col-md-6'
-            style='text-align: center;width: 57%;margin: 0 auto;border-radius: 2.25rem;margin-top: 30px;'>
+        <div class='col-md-4'
+            style='text-align: center;width: 80%;margin: 0 auto;border-radius: 2.25rem;margin-top: 30px;'>
             <p
-                style='padding-top: 5px;padding-bottom: 5px;border-radius: 1.25rem;width: 50%;background-color: #67ff67;font-weight: bold;margin: 0 auto;'>
-                POSITIVE REVIEWS -->{{np}}/{{n}}</p>
+                style='padding-top: 5px;padding-bottom: 5px;border-radius: 1.25rem;width: 60%;background-color: #67ff67;font-weight: bold;margin: 0 auto;'>
+                POSITIVE REVIEWS -->{{pos}}</p>
         </div>
-
-        <div class='col-md-6'
-            style='text-align: center;width: 57%;margin: 0 auto;border-radius: 2.25rem;margin-top: 30px;'>
+        <div class='col-md-4'
+            style='text-align: center;width:80%;margin: 0 auto;border-radius: 2.25rem;margin-top: 30px;'>
             <p
-                style="padding-top: 5px;padding-bottom: 5px;width: 50%;background-color: #ff5d5d;font-weight: bold;margin: 0 auto;border-radius: 1.25rem;">
-                NEGATIVE REVIEWS --> {{nn}}/{{n}}</p>
+                style="padding-top: 5px;padding-bottom: 5px;width: 60%;background-color: #bce6ff;font-weight: bold;margin: 0 auto;border-radius: 1.25rem;">
+                NEUTRAL REVIEWS --> {{neu}}</p>
+        </div>
+        <div class='col-md-4'
+            style='text-align: center;width: 80%;margin: 0 auto;border-radius: 2.25rem;margin-top: 30px;'>
+            <p
+                style="padding-top: 5px;padding-bottom: 5px;width: 60%;background-color: #ff5d5d;font-weight: bold;margin: 0 auto;border-radius: 1.25rem;">
+                NEGATIVE REVIEWS --> {{neg}}</p>
         </div>
     </div>
 
@@ -115,12 +120,34 @@
     <div class="card my-5 " style="max-width: 1000px;">
         <div class="row" style='align-items:center'>
             <div class="col-md-12">
-                {% if  obj['sent'] =='POSITIVE' %}
+                {% if  obj['sent'] =='POSITIVE'%}
                 <div class="card-body" style="background-color:#67ff67;">
                     <p style="font-size:22px;"><b> {{obj['ch']}} </b></p>
+                    <p style="font-size:22px;"><b>Sentiment Review:Positive</b></p>
                     <p class="card-text" style="font-size:20px;">{{ obj['review'] }} </p>
                     <p style="font-size:14px;text-align: end;"><i> {{obj['cn']}} </i></p>
-                    <div>
+                    <div style="font-size:18px;">User Rating
+                        {% if obj['stars'] == 0 %}
+                        <p> No rating Given </p>
+                        {% else %}
+                        {% for it in range(obj['stars']) %}
+                        <span class="fa fa-star checked"></span>
+                        {% endfor %}
+                        {% for it in range(5-obj['stars']) %}
+                        <span class="fa fa-star"></span>
+                        {% endfor %}
+                        {% endif %}
+
+                    </div>
+                </div>
+                {% endif %}
+                {% if obj['sent'] =='NEUTRAL' %}
+                <div class="card-body" style="background-color:#bce6ff;">
+                    <p style="font-size:22px;"><b> {{obj['ch']}} </b></p>
+                    <p style="font-size:22px;"><b>Sentiment Review:Neutral</b></p>
+                    <p class="card-text" style="font-size:20px;">{{ obj['review'] }} </p>
+                    <p style="font-size:14px;text-align: end;"><i> {{obj['cn']}} </i></p>
+                    <div style="font-size:18px;">User Rating
                         {% if obj['stars'] == 0 %}
                         <p> No rating Given </p>
                         {% else %}
@@ -137,11 +164,12 @@
                 {% endif %}
 
                 {% if obj['sent'] =='NEGATIVE' %}
-                <div class="card-body" style="background-color:indianred;">
+                <div class="card-body" style="background-color:#ff5d5d;">
                     <p style="font-size:22px;"><b> {{obj['ch']}} </b></p>
+                    <p style="font-size:22px;"><b>Sentiment Review:Negative</b></p>
                     <p class="card-text" style="font-size:20px;">{{ obj['review'] }} </p>
-                    <p style="font-size:12px;text-align: end;"><i> {{obj['cn']}} </i></p>
-                    <div>
+                    <p style="font-size:12px;text-align: end;"><i> {{obj['cn']}}  </i></p>
+                    <div style="font-size:18px;">User Rating
                         {% if obj['stars'] == 0 %}
                         <p> No rating Given </p>
                         {% else %}
